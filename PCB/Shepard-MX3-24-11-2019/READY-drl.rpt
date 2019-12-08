@@ -1,0 +1,28 @@
+Drill report for /Users/RadaR/Documents/Dev/Shepard-MX3/READY.kicad_pcb
+Created on Sunday, 24 November 2019 at 22:14:06
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  B.Cu                      back
+
+
+Drill file 'READY-PTH-drl.gbr' contains
+    plated through holes:
+    =============================================================
+    T1  0.40mm  0.016"  (55 holes)
+    T2  0.60mm  0.024"  (47 holes)
+    T3  0.80mm  0.031"  (25 holes)
+    T4  1.00mm  0.039"  (60 holes)
+    T5  1.30mm  0.051"  (2 holes)
+    T6  1.40mm  0.055"  (2 holes)
+    T7  3.00mm  0.118"  (4 holes)
+
+    Total plated holes count 195
+
+
+Drill file 'READY-NPTH-drl.gbr' contains
+    unplated through holes:
+    =============================================================
+
+    Total unplated holes count 0

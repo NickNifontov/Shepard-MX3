@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Shepard-rescue)(type Legacy)(uri ${KIPRJMOD}/Shepard-rescue.lib)(options "")(descr ""))
+)
