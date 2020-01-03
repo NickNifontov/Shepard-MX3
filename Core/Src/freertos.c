@@ -65,6 +65,10 @@ uint16_t IN_BAD=0;
 uint16_t OUT_OK=0;
 uint16_t OUT_BAD=0;
 
+uint16_t Start_Attept_CNT=0;
+
+INV_STATE New_INV_STATE=OFF;
+
 #define TOTAL_CMP 10000
 #define TOTAL_LEVEL 100
 
@@ -229,8 +233,6 @@ void StartInvTask(void const * argument)
   MX3_INV_State=OFF;
   NeedUpdate_INV_STATE=YES;
 
-  INV_STATE New_INV_STATE=OFF;
-
   for(;;)
   {
 	if ( (Blocked_by_PVD==NO) && (Blocked_by_AB==NO)  && (Blocked_by_TEMP==NO)) {
@@ -331,16 +333,29 @@ void StartOUT_ACTask(void const * argument)
 		}
 
 		if (OUT_BAD+OUT_OK>=TOTAL_CMP) {
-
 			if (OUT_OK>=TOTAL_LEVEL) {
+				// YES AC
+				Start_Attept_CNT=0;
 				if (RELAY_NO_ACOUT==YES) {
 					RELAY_NO_ACOUT=NO;
 					NeedUpdate_RELAY_STATE=YES;
 				}
 			} else {
-				if (RELAY_NO_ACOUT==NO) {
+				// NO AC
+				if ((Start_Attept_CNT>=5) && (RELAY_NO_ACOUT==NO)) {
 					RELAY_NO_ACOUT=YES;
 					NeedUpdate_RELAY_STATE=YES;
+				} else {
+					if ( (Blocked_by_PVD==NO) && (Blocked_by_AB==NO)  && (Blocked_by_TEMP==NO) && (RELAY_NO_ACOUT==NO)) {
+									Start_Attept_CNT++;
+									//
+									Inv_OFF();
+									//MX3_INV_State=OFF;
+									osDelay(1000);
+									Inv_ON();
+									//MX3_INV_State=ON;
+					}
+					osDelay(60000);
 				}
 			}
 
@@ -363,7 +378,7 @@ void StartOUT_ACTask(void const * argument)
 
 void Calc_Temp() {
     // convert the value to resistance
-    average = Global_TEMP;
+    average = Global_TEMP_AVG;
     average = 3300 / average - 1;
     average = SERIESRESISTOR * average;
 
@@ -374,6 +389,7 @@ void Calc_Temp() {
     steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
     steinhart = 1.0 / steinhart;                 // Invert
     steinhart -= 273.15;                         // convert to C
+    steinhart += 23;
 }
 
 void StartTempTask(void const * argument)
@@ -529,17 +545,31 @@ void StartRestartCMDTask(void const * argument)
   for(;;)
   {
 	if (RESTART_CMD_FLAG==YES) {
+		Start_Attept_CNT=0;
+
 		RESTART_CMD_FLAG=NO;
 
-		osDelay(1000);
+		osDelay(100);
 
 		if (HAL_GPIO_ReadPin(RESTART_CMD_GPIO_Port,RESTART_CMD_Pin)==GPIO_PIN_RESET) {
 
 			//if (MX3_INV_State==OFF) {
-				MX3_INV_State=OFF;
+				//MX3_INV_State=OFF;
 				Inv_OFF();
+
+				//10msec
+							volatile uint32_t sec_delay=30000;
+							//volatile uint16_t sec_delay=250;
+
+							for (uint16_t i=0; i<sec_delay; ++i) {
+										// 1 microsec
+										for (int j = 0; j < 32; ++j) {
+											__asm__ __volatile__("nop\n\t":::"memory");
+										}
+							}
 			//}
 
+			Inv_ON();
 
 			// reset temp
 			Calc_Temp();
@@ -553,10 +583,19 @@ void StartRestartCMDTask(void const * argument)
 				Blocked_by_AB=NO;
 				ab_stamp=0;
 			}
+
+			New_INV_STATE=ON;
+
+			//osDelay(1000);
+
+			//MX3_INV_State=ON;
+			//Inv_ON();
+
+			//osDelay(5000);
 		}
 
 	}
-    osDelay(1000);
+    osDelay(3000);
   }
   /* USER CODE END StartRestartCMDTask */
 }

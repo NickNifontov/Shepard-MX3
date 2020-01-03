@@ -75,7 +75,7 @@ void Error_Handler(void);
 #define TEMP_DELAY_LENGTH 120  //2 min
 #define TEMP_ROLLBACK_DELAY_LENGTH 120  //2 min
 
-#define TEMP_MAX 80
+#define TEMP_MAX 70
 #define TEMP_COLRSTART 50
 #define TEMP_ROLLBACK 45
 
