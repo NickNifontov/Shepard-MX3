@@ -694,7 +694,7 @@ void StartABTask(void const * argument)
 				RELAY_LOW_AB=YES;
 			}
 		} else {
-			if (RELAY_LOW_AB==YES) {
+			if ((RELAY_LOW_AB==YES)  && (temp_AB>=BUZZER_OPORA_3p))  {
 				NeedUpdate_RELAY_STATE=YES;
 				RELAY_LOW_AB=NO;
 			}
@@ -706,7 +706,7 @@ void StartABTask(void const * argument)
 				RELAY_VERYLOW_AB=YES;
 			}
 		} else {
-			if (RELAY_VERYLOW_AB==YES) {
+			if ((RELAY_VERYLOW_AB==YES)  && (temp_AB>=AB_LOW_3p)) {
 				NeedUpdate_RELAY_STATE=YES;
 				RELAY_VERYLOW_AB=NO;
 			}
