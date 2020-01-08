@@ -389,7 +389,7 @@ void Calc_Temp() {
     steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
     steinhart = 1.0 / steinhart;                 // Invert
     steinhart -= 273.15;                         // convert to C
-    steinhart += 23;
+    steinhart += 43;
 }
 
 void StartTempTask(void const * argument)
@@ -422,7 +422,7 @@ void StartTempTask(void const * argument)
 
 		    if (steinhart<TEMP_MAX) {
 			  if ((Blocked_by_TEMP==YES) && (steinhart<=TEMP_ROLLBACK)) {
-				  if (temp_stamp==0) {
+				  if (temp_stamp==0)  {
 					  temp_stamp=xTaskGetTickCount();
 				  }
 				  if (CheckStamp(temp_stamp,TEMP_DELAY_LENGTH)==1) {
@@ -434,7 +434,7 @@ void StartTempTask(void const * argument)
 					  temp_stamp=0;
 				 }
 			  } else {
-				  Blocked_by_TEMP=NO;
+				  //Blocked_by_TEMP=NO;
 				  if (RELAY_OVER_TEMP==YES) {
 					  RELAY_OVER_TEMP=NO;
 				  		NeedUpdate_RELAY_STATE=YES;
@@ -569,22 +569,31 @@ void StartRestartCMDTask(void const * argument)
 							}
 			//}
 
-			Inv_ON();
+
 
 			// reset temp
 			Calc_Temp();
 			if (steinhart<TEMP_COLRSTART) {
 				Blocked_by_TEMP=NO;
 				temp_stamp=0;
+
+				//reset AB
+							if ((Global_AB_AVG>=AB_COLDRUN) && (Global_AB_AVG<=AB_MAX)) {
+								Blocked_by_AB=NO;
+								ab_stamp=0;
+
+								Inv_ON();
+
+								New_INV_STATE=ON;
+							}
+
+
+			} else {
+				Blocked_by_TEMP=YES;
 			}
 
-			//reset AB
-			if ((Global_AB_AVG>=AB_COLDRUN) && (Global_AB_AVG<=AB_MAX)) {
-				Blocked_by_AB=NO;
-				ab_stamp=0;
-			}
 
-			New_INV_STATE=ON;
+			//New_INV_STATE=ON;
 
 			//osDelay(1000);
 
