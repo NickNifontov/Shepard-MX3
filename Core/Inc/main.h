@@ -65,7 +65,7 @@ void Error_Handler(void);
 
 
 #define BUZZER_OPORA 1000 // 1.0V - 0.2V
-#define BUZZER_OPORA_3p ((uint16_t) (BUZZER_OPORA*1.03)) // 1.0V - 0.2V
+#define BUZZER_OPORA_3p ((uint16_t) (BUZZER_OPORA*1.05)) // 1.0V - 0.2V
 #define AB_LOW ((uint16_t) (BUZZER_OPORA*0.92))
 #define AB_LOW_3p ((uint16_t) (BUZZER_OPORA*0.95))
 #define AB_ROLLBACK ((uint16_t) (BUZZER_OPORA*1.1))

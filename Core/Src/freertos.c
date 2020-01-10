@@ -389,7 +389,7 @@ void Calc_Temp() {
     steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
     steinhart = 1.0 / steinhart;                 // Invert
     steinhart -= 273.15;                         // convert to C
-    steinhart += 43;
+    steinhart += 10;
 }
 
 void StartTempTask(void const * argument)
@@ -695,8 +695,11 @@ void StartABTask(void const * argument)
 			}
 		} else {
 			if ((RELAY_LOW_AB==YES)  && (temp_AB>=BUZZER_OPORA_3p))  {
-				NeedUpdate_RELAY_STATE=YES;
-				RELAY_LOW_AB=NO;
+				osDelay(500);
+				if (temp_AB>=BUZZER_OPORA_3p) {
+					NeedUpdate_RELAY_STATE=YES;
+					RELAY_LOW_AB=NO;
+				}
 			}
 		}
 
